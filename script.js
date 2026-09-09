@@ -1,3 +1,12 @@
+// Startup screen handler
+document.getElementById('enterBtn').addEventListener('click', () => {
+    const startupScreen = document.getElementById('startupScreen');
+    const gameContainer = document.getElementById('gameContainer');
+    
+    startupScreen.classList.add('hidden');
+    gameContainer.classList.remove('hidden');
+});
+
 // Canvas setup
 const canvas = document.getElementById('pongCanvas');
 const ctx = canvas.getContext('2d');
