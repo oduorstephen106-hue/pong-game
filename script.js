@@ -27,6 +27,14 @@ let gameState = {
     ownedPaddleSkins: ['default']
 };
 
+// M-Pesa Coin Packages
+const mpesaPackages = [
+    { coins: 100, price: 100, description: '100 Coins' },
+    { coins: 250, price: 250, description: '250 Coins', bonus: '25% Bonus' },
+    { coins: 500, price: 500, description: '500 Coins', bonus: '50% Bonus' },
+    { coins: 1000, price: 1000, description: '1000 Coins', bonus: '100% Bonus' }
+];
+
 // Shop Items
 const ballSkins = [
     { id: 'default', name: 'Classic', color: '#ffff00', cost: 0 },
@@ -116,8 +124,11 @@ document.addEventListener('mousemove', (e) => {
 
 // Shop Modal Functions
 const shopModal = document.getElementById('shopModal');
+const mpesaPaymentModal = document.getElementById('mpesaPaymentModal');
 const closeShopBtn = document.getElementById('closeShop');
+const closeMpesaBtn = document.getElementById('closeMpesa');
 const shopBtn = document.getElementById('shopBtn');
+const processPaymentBtn = document.getElementById('processPaymentBtn');
 
 shopBtn.addEventListener('click', () => {
     shopModal.classList.remove('hidden');
@@ -128,15 +139,26 @@ closeShopBtn.addEventListener('click', () => {
     shopModal.classList.add('hidden');
 });
 
+closeMpesaBtn.addEventListener('click', () => {
+    mpesaPaymentModal.classList.add('hidden');
+});
+
 shopModal.addEventListener('click', (e) => {
     if (e.target === shopModal) {
         shopModal.classList.add('hidden');
     }
 });
 
+mpesaPaymentModal.addEventListener('click', (e) => {
+    if (e.target === mpesaPaymentModal) {
+        mpesaPaymentModal.classList.add('hidden');
+    }
+});
+
 function populateShop() {
     const ballShop = document.getElementById('ballShop');
     const paddleShop = document.getElementById('paddleShop');
+    const mpesaShop = document.getElementById('mpesaPackages');
     const shopCoinsDisplay = document.getElementById('shopCoins');
     
     shopCoinsDisplay.textContent = gameState.coins;
@@ -177,6 +199,21 @@ function populateShop() {
             </button>
         `;
         paddleShop.appendChild(item);
+    });
+    
+    // Populate M-Pesa packages
+    mpesaShop.innerHTML = '';
+    mpesaPackages.forEach(pkg => {
+        const item = document.createElement('div');
+        item.className = 'mpesa-package';
+        item.innerHTML = `
+            <h4>${pkg.description}</h4>
+            <div class="coins-amount">💰 ${pkg.coins}</div>
+            <div class="price">KSH ${pkg.price}</div>
+            ${pkg.bonus ? `<p style="color: #00ff00; font-size: 0.9em;">+${pkg.bonus}</p>` : ''}
+            <button class="buy-btn" onclick="initiateMpesaPayment(${pkg.coins}, ${pkg.price})">💳 Buy</button>
+        `;
+        mpesaShop.appendChild(item);
     });
 }
 
@@ -230,6 +267,91 @@ function buySkin(type, skinId, cost) {
     }
 }
 
+function initiateMpesaPayment(coins, amount) {
+    document.getElementById('paymentCoins').textContent = coins;
+    document.getElementById('paymentAmount').textContent = amount;
+    mpesaPaymentModal.classList.remove('hidden');
+    shopModal.classList.add('hidden');
+}
+
+function buyPremiumMpesa() {
+    initiateMpesaPayment(0, 500); // Premium = KSH 500
+}
+
+processPaymentBtn.addEventListener('click', async () => {
+    const phoneNumber = document.getElementById('phoneNumber').value.trim();
+    const customerName = document.getElementById('customerName').value.trim();
+    const amount = parseInt(document.getElementById('paymentAmount').textContent);
+    const coins = parseInt(document.getElementById('paymentCoins').textContent);
+    
+    if (!phoneNumber || !customerName) {
+        showNotification('❌ Please fill in all fields!');
+        return;
+    }
+    
+    if (phoneNumber.length < 12) {
+        showNotification('❌ Invalid phone number format!');
+        return;
+    }
+    
+    const paymentStatus = document.getElementById('paymentStatus');
+    paymentStatus.classList.remove('hidden', 'success', 'error', 'processing');
+    paymentStatus.classList.add('processing');
+    paymentStatus.textContent = '⏳ Processing payment... You will receive an M-Pesa prompt on your phone.';
+    
+    try {
+        // Send payment request to backend
+        const response = await fetch('/api/mpesa/payment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                phoneNumber: phoneNumber,
+                amount: amount,
+                customerName: customerName,
+                coins: coins,
+                isPremium: coins === 0
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            paymentStatus.classList.remove('processing');
+            paymentStatus.classList.add('success');
+            paymentStatus.textContent = '✅ Payment successful! Coins added to your account.';
+            
+            if (coins > 0) {
+                gameState.coins += coins;
+            } else {
+                gameState.isPremium = true;
+            }
+            saveGameState();
+            updateCoinsDisplay();
+            updatePremiumBadge();
+            
+            setTimeout(() => {
+                mpesaPaymentModal.classList.add('hidden');
+                shopModal.classList.remove('hidden');
+                document.getElementById('phoneNumber').value = '';
+                document.getElementById('customerName').value = '';
+                paymentStatus.classList.add('hidden');
+                populateShop();
+            }, 3000);
+        } else {
+            paymentStatus.classList.remove('processing');
+            paymentStatus.classList.add('error');
+            paymentStatus.textContent = `❌ Payment failed: ${result.message}`;
+        }
+    } catch (error) {
+        console.error('Payment error:', error);
+        paymentStatus.classList.remove('processing');
+        paymentStatus.classList.add('error');
+        paymentStatus.textContent = '❌ Connection error. Please try again.';
+    }
+});
+
 function updateCoinsDisplay() {
     document.getElementById('coins').textContent = gameState.coins;
 }
@@ -279,7 +401,6 @@ function showNotification(message) {
 function update() {
     if (!gameRunning) return;
 
-    // Player paddle movement with arrow keys
     if (keys['ArrowUp'] && player.y > 0) {
         player.y -= player.speed;
     }
@@ -287,37 +408,32 @@ function update() {
         player.y += player.speed;
     }
 
-    // Constrain player paddle
     if (player.y < 0) player.y = 0;
     if (player.y > canvas.height - player.height) player.y = canvas.height - player.height;
 
-    // Ball movement
     ball.x += ball.dx;
     ball.y += ball.dy;
 
-    // Ball collision with top and bottom walls
     if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) {
         ball.dy = -ball.dy;
         ball.y = ball.y - ball.radius < 0 ? ball.radius : canvas.height - ball.radius;
     }
 
-    // Ball collision with left and right walls (scoring)
     if (ball.x - ball.radius < 0) {
         computerScore++;
         document.getElementById('computerScore').textContent = computerScore;
-        addCoins(10); // Earn 10 coins for computer scoring
+        addCoins(10);
         resetBall();
         return;
     }
     if (ball.x + ball.radius > canvas.width) {
         playerScore++;
         document.getElementById('playerScore').textContent = playerScore;
-        addCoins(20); // Earn 20 coins for player scoring
+        addCoins(20);
         resetBall();
         return;
     }
 
-    // Ball collision with player paddle
     if (
         ball.x - ball.radius < player.x + player.width &&
         ball.y > player.y &&
@@ -330,7 +446,6 @@ function update() {
         ball.dy = (collidePoint / (player.height / 2)) * ball.speed;
     }
 
-    // Ball collision with computer paddle
     if (
         ball.x + ball.radius > computer.x &&
         ball.y > computer.y &&
@@ -343,7 +458,6 @@ function update() {
         ball.dy = (collidePoint / (computer.height / 2)) * ball.speed;
     }
 
-    // Computer AI
     const computerCenter = computer.y + computer.height / 2;
     if (computerCenter < ball.y - 35) {
         computer.y += computer.speed;
@@ -351,7 +465,6 @@ function update() {
         computer.y -= computer.speed;
     }
 
-    // Keep computer paddle in bounds
     if (computer.y < 0) computer.y = 0;
     if (computer.y > canvas.height - computer.height) {
         computer.y = canvas.height - computer.height;
@@ -360,11 +473,9 @@ function update() {
 
 // Draw function
 function draw() {
-    // Clear canvas
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw center line
     ctx.strokeStyle = '#00ff00';
     ctx.setLineDash([10, 10]);
     ctx.beginPath();
@@ -373,16 +484,13 @@ function draw() {
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // Draw player paddle with selected skin
     const playerSkin = paddleSkins.find(s => s.id === gameState.selectedPaddleSkin);
     ctx.fillStyle = playerSkin.color;
     ctx.fillRect(player.x, player.y, player.width, player.height);
 
-    // Draw computer paddle
     ctx.fillStyle = '#ff00ff';
     ctx.fillRect(computer.x, computer.y, computer.width, computer.height);
 
-    // Draw ball with selected skin
     const ballSkin = ballSkins.find(s => s.id === gameState.selectedBallSkin);
     
     if (ballSkin.gradient) {
@@ -405,7 +513,6 @@ function draw() {
     }
 }
 
-// Reset ball to center
 function resetBall() {
     ball.x = canvas.width / 2;
     ball.y = canvas.height / 2;
@@ -413,28 +520,24 @@ function resetBall() {
     ball.dy = (Math.random() - 0.5) * ball.speed;
 }
 
-// Add coins to player
 function addCoins(amount) {
     gameState.coins += amount;
     updateCoinsDisplay();
     saveGameState();
 }
 
-// Game loop
 function gameLoop() {
     update();
     draw();
     requestAnimationFrame(gameLoop);
 }
 
-// Start game
 document.getElementById('startBtn').addEventListener('click', () => {
     gameRunning = !gameRunning;
     const btn = document.getElementById('startBtn');
     btn.textContent = gameRunning ? 'Pause Game' : 'Resume Game';
 });
 
-// Reset score
 document.getElementById('resetBtn').addEventListener('click', () => {
     playerScore = 0;
     computerScore = 0;
@@ -445,7 +548,6 @@ document.getElementById('resetBtn').addEventListener('click', () => {
     resetBall();
 });
 
-// Initialize game
 loadGameState();
 resetBall();
 gameLoop();
