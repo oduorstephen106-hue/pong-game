@@ -1,0 +1,223 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Arial', sans-serif;
+}
+
+/* Startup Screen Styles */
+.startup-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.5s ease-in;
+}
+
+.startup-screen.hidden {
+    display: none;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.startup-content {
+    text-align: center;
+    animation: slideUp 0.8s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.startup-title {
+    color: #00ff00;
+    font-size: 4em;
+    margin-bottom: 40px;
+    text-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+    letter-spacing: 3px;
+    animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%, 100% {
+        text-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+    }
+    50% {
+        text-shadow: 0 0 40px rgba(0, 255, 0, 1);
+    }
+}
+
+.startup-info {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 40px 50px;
+    border-radius: 15px;
+    border: 2px solid #00ff00;
+    margin-bottom: 40px;
+    box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+}
+
+.startup-info p {
+    color: #00ff00;
+    font-size: 1.2em;
+    margin: 15px 0;
+    letter-spacing: 1px;
+}
+
+.startup-info h2 {
+    color: #ffff00;
+    font-size: 2.5em;
+    margin: 20px 0;
+    text-shadow: 0 0 15px rgba(255, 255, 0, 0.6);
+}
+
+.startup-info h3 {
+    color: #ff00ff;
+    font-size: 1.8em;
+    margin: 20px 0 15px 0;
+    text-shadow: 0 0 15px rgba(255, 0, 255, 0.6);
+}
+
+.startup-btn {
+    background: linear-gradient(135deg, #00ff00 0%, #00ccff 100%);
+    color: #000;
+    border: none;
+    padding: 15px 50px;
+    font-size: 1.3em;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0, 255, 0, 0.4);
+    letter-spacing: 2px;
+}
+
+.startup-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0, 255, 0, 0.6);
+}
+
+.startup-btn:active {
+    transform: translateY(-1px);
+}
+
+/* Main Game Container */
+.container {
+    text-align: center;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.5s ease-in;
+}
+
+.container.hidden {
+    display: none;
+}
+
+h1 {
+    color: #00ff00;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+.scoreboard {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    gap: 40px;
+}
+
+.score-item {
+    background: rgba(0, 255, 0, 0.1);
+    padding: 15px 30px;
+    border-radius: 10px;
+    border: 2px solid #00ff00;
+}
+
+.score-item p {
+    color: #00ff00;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.score-item span {
+    color: #00ff00;
+    font-size: 2em;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+#pongCanvas {
+    border: 3px solid #00ff00;
+    background-color: #000;
+    display: block;
+    margin: 20px auto;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+.controls {
+    color: #fff;
+    margin-top: 20px;
+}
+
+.controls p {
+    margin-bottom: 15px;
+    font-size: 0.95em;
+    color: #ccc;
+}
+
+.controls strong {
+    color: #00ff00;
+}
+
+.btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: 2px solid #00ff00;
+    padding: 12px 30px;
+    margin: 0 10px;
+    font-size: 1em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.btn:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+    transform: translateY(-2px);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
