@@ -91,17 +91,61 @@
                 <div class="shop-items" id="paddleShop"></div>
             </div>
 
+            <div class="shop-section">
+                <h3>💳 Buy Coins with M-Pesa</h3>
+                <div class="mpesa-packages" id="mpesaPackages"></div>
+            </div>
+
             <div class="shop-section premium-section">
                 <h3>⭐ PREMIUM FEATURES</h3>
                 <div class="premium-item">
                     <p><strong>Remove All Ads</strong> - Enjoy ad-free gameplay forever</p>
-                    <button class="buy-btn premium-buy" data-price="9.99">💳 $9.99</button>
+                    <button class="buy-btn premium-buy" onclick="buyPremiumMpesa()">💳 KSH 500</button>
                 </div>
             </div>
 
             <div class="coins-info">
                 <p>💰 Current Coins: <span id="shopCoins">0</span></p>
             </div>
+        </div>
+    </div>
+
+    <!-- M-Pesa Payment Modal -->
+    <div id="mpesaPaymentModal" class="modal hidden">
+        <div class="modal-content mpesa-modal">
+            <button id="closeMpesa" class="close-btn">&times;</button>
+            <h2>💳 M-Pesa Payment</h2>
+            
+            <div class="payment-info">
+                <p><strong>Amount:</strong> <span id="paymentAmount">0</span> KSH</p>
+                <p><strong>Coins:</strong> <span id="paymentCoins">0</span> 💰</p>
+            </div>
+
+            <div class="form-group">
+                <label for="phoneNumber">📱 M-Pesa Phone Number:</label>
+                <input type="tel" id="phoneNumber" placeholder="254712345678" maxlength="12">
+                <small>Format: 254XXXXXXXXX (without +)</small>
+            </div>
+
+            <div class="form-group">
+                <label for="customerName">👤 Your Name:</label>
+                <input type="text" id="customerName" placeholder="Stephen Oduor">
+            </div>
+
+            <div class="payment-instructions">
+                <h4>📋 How it works:</h4>
+                <ol>
+                    <li>Enter your M-Pesa phone number and name</li>
+                    <li>Click "Request M-Pesa Payment"</li>
+                    <li>You'll receive an M-Pesa prompt on your phone</li>
+                    <li>Enter your M-Pesa PIN to confirm</li>
+                    <li>Coins added instantly after payment!</li>
+                </ol>
+            </div>
+
+            <button id="processPaymentBtn" class="btn buy-btn" style="width: 100%; margin-top: 20px;">Request M-Pesa Payment</button>
+            
+            <div id="paymentStatus" class="payment-status hidden"></div>
         </div>
     </div>
 
