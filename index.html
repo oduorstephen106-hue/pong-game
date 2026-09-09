@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pong Game</title>
+    <title>Pong Game - Premium Edition</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-xxxxxxxxxxxxxxxx"
+        crossorigin="anonymous"></script>
 </head>
 <body>
     <!-- Startup Screen -->
@@ -23,7 +26,25 @@
 
     <!-- Main Game Container -->
     <div id="gameContainer" class="container hidden">
-        <h1>PONG GAME</h1>
+        <!-- Ad Banner Top -->
+        <div id="adBannerTop" class="ad-banner">
+            <ins class="adsbygoogle"
+                style="display:block"
+                data-ad-client="ca-pub-xxxxxxxxxxxxxxxx"
+                data-ad-slot="xxxxxxxx"
+                data-ad-format="horizontal"
+                data-full-width-responsive="true"></ins>
+        </div>
+
+        <div class="game-header">
+            <h1>PONG GAME</h1>
+            <div class="currency-display">
+                <span class="coins">💰</span>
+                <span id="coins">0</span>
+                <button id="shopBtn" class="shop-btn">SHOP</button>
+            </div>
+        </div>
+
         <div class="scoreboard">
             <div class="score-item">
                 <p>Player</p>
@@ -42,7 +63,50 @@
             <button id="startBtn" class="btn">Start Game</button>
             <button id="resetBtn" class="btn">Reset Score</button>
         </div>
+
+        <!-- Ad Banner Bottom -->
+        <div id="adBannerBottom" class="ad-banner">
+            <ins class="adsbygoogle"
+                style="display:block"
+                data-ad-client="ca-pub-xxxxxxxxxxxxxxxx"
+                data-ad-slot="xxxxxxxx"
+                data-ad-format="horizontal"
+                data-full-width-responsive="true"></ins>
+        </div>
     </div>
+
+    <!-- Shop Modal -->
+    <div id="shopModal" class="modal hidden">
+        <div class="modal-content">
+            <button id="closeShop" class="close-btn">&times;</button>
+            <h2>🛍️ COSMETICS SHOP</h2>
+            
+            <div class="shop-section">
+                <h3>Ball Skins</h3>
+                <div class="shop-items" id="ballShop"></div>
+            </div>
+
+            <div class="shop-section">
+                <h3>Paddle Skins</h3>
+                <div class="shop-items" id="paddleShop"></div>
+            </div>
+
+            <div class="shop-section premium-section">
+                <h3>⭐ PREMIUM FEATURES</h3>
+                <div class="premium-item">
+                    <p><strong>Remove All Ads</strong> - Enjoy ad-free gameplay forever</p>
+                    <button class="buy-btn premium-buy" data-price="9.99">💳 $9.99</button>
+                </div>
+            </div>
+
+            <div class="coins-info">
+                <p>💰 Current Coins: <span id="shopCoins">0</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Premium Badge -->
+    <div id="premiumBadge" class="premium-badge hidden">⭐ PREMIUM</div>
 
     <script src="script.js"></script>
 </body>
