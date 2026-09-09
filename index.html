@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pong Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Startup Screen -->
+    <div id="startupScreen" class="startup-screen">
+        <div class="startup-content">
+            <h1 class="startup-title">PONG GAME</h1>
+            <div class="startup-info">
+                <p>GAME DEVELOPED BY</p>
+                <h2>STEPHEN OMANI ODUOR</h2>
+                <p>A STUDENT AT</p>
+                <h3>KISII UNIVERSITY</h3>
+            </div>
+            <button id="enterBtn" class="startup-btn">ENTER GAME</button>
+        </div>
+    </div>
+
+    <!-- Main Game Container -->
+    <div id="gameContainer" class="container hidden">
+        <h1>PONG GAME</h1>
+        <div class="scoreboard">
+            <div class="score-item">
+                <p>Player</p>
+                <span id="playerScore">0</span>
+            </div>
+            <div class="score-item">
+                <p>Computer</p>
+                <span id="computerScore">0</span>
+            </div>
+        </div>
+        
+        <canvas id="pongCanvas" width="800" height="400"></canvas>
+        
+        <div class="controls">
+            <p>Player Controls: <strong>Mouse Y-Position</strong> or <strong>Arrow Keys (↑/↓)</strong></p>
+            <button id="startBtn" class="btn">Start Game</button>
+            <button id="resetBtn" class="btn">Reset Score</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
